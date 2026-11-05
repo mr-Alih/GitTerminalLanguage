@@ -14,13 +14,14 @@ using ErrorHandelling;
 // Main frame
 using System.Net;
 using System.Net.Mime;
+using System.Collections;
 
 // init load
 MainLoop();
 
 static void MainLoop()
 {
-    Console.Write("GTL ~> ");
+    Console.Write("[GTL]@T- :// ");
     string Command = Console.ReadLine() ?? "";
     run_check(Command);
 }
@@ -31,19 +32,37 @@ static void run_check(string CommandName)
     {
         if (CommandName.Contains("start"))
         {
-            // first lets check if all necessery files are created.
-            if (exists(".con") != "False") 
+            int state = 1;
+
+            while (state <= 3)
             {
-                if (exists(".server") != "False")
+                switch (state)
                 {
-                    if (exists(".local") != "False")
-                    {
-                        // succesnode
-                    } else return;
-                } else return;      
-                ErrorHandler.Load_Error("Error FileNames notfound");
-                MainLoop();
-            } else {MainLoop();}
+                    case 1:
+                        if (Run_Exists(".con"))
+                            state = 2;
+                        else
+                            return;
+                        break;
+
+                    case 2:
+                        if (Run_Exists(".server"))
+                            state = 3;
+                        else
+                            return;
+                        break;
+
+                    case 3:
+                        if (Run_Exists(".con"))
+                        {
+                            // approve
+                            state = 4;
+                        }
+                        else
+                            return;
+                        break;
+                }
+            }
         }
         else
         {
@@ -71,17 +90,17 @@ static void establish_session()
 }
 
 // small controls and checks
-static string exists(string FileNameCheck)
+static bool Run_Exists(string FileNameCheck)
 {
-    string FileContent;
+    bool Run_Bool;
     try
     {
-        FileContent = File.ReadAllText(FileNameCheck);
-        return FileContent;
+        Run_Bool = File.Exists(FileNameCheck);
+        return Run_Bool;
     }
     catch
     {
         ErrorHandler.Load_Error("Error ALL");
-        return "False";
+        return false;
     }
 }
