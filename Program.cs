@@ -1,6 +1,7 @@
 ﻿// init
 using System.ComponentModel;
 using System.IO;
+using ErrorHandelling;
 
 // GTL architecture
 // GTL start to start a first connection and auto connect a session.
@@ -40,19 +41,19 @@ static void run_check(string CommandName)
                         // succesnode
                     } else return;
                 } else return;      
-                Console.WriteLine("Error FileNames notfound");
+                ErrorHandler.Load_Error("Error FileNames notfound");
                 MainLoop();
             } else {MainLoop();}
         }
         else
         {
             // check if Perhaps misspelled
-            Console.WriteLine($"Error 404, Command {CommandName[4..]} Not Found");
+            ErrorHandler.Load_Error($"Error 404, Command {CommandName[4..]} Not Found");
             MainLoop();
         }
     } else
     {
-        Console.WriteLine("Error 404, Perhaps GTL?");
+        ErrorHandler.Load_Error("Error 404, Perhaps GTL?");
         MainLoop();
     }
 }
@@ -80,7 +81,7 @@ static string exists(string FileNameCheck)
     }
     catch
     {
-        Console.WriteLine("Error ALL");
+        ErrorHandler.Load_Error("Error ALL");
         return "False";
     }
 }

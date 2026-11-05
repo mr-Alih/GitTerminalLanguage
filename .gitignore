@@ -16,3 +16,6 @@ obj/
 
 # IDE settings
 .idea/
+
+# private
+.priv
