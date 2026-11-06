@@ -17,6 +17,7 @@ using GTL.AI;
 using System.Net;
 using System.Net.Mime;
 using System.Collections;
+using System.Runtime.CompilerServices;
 
 // init load
 await MainLoop();
@@ -85,15 +86,22 @@ static async Task run_check(string CommandName)
                         break;
                 }
             }
-        } else if (CommandName.StartsWith("GTL AI ", StringComparison.OrdinalIgnoreCase))
+        }
+        // Debugging basic filesstack
+        else if (CommandName.StartsWith("GTL AI Debug File", StringComparison.OrdinalIgnoreCase))
+        {
+            // hardcode local filepath
+            string filePath = ("./Local/" + CommandName["GTL AI Debug File ".Length..]);
+            string content = File.ReadAllText(filePath);
+            string PromptHelper = $"Please debug this code, make your answer as short as possible. no details until asked";
+            string CommandPrompt = $"{PromptHelper}\n\n{content}\nProgram filepath: {filePath}";
+            await Ai_Stack(CommandPrompt);
+        }
+        // Main ai questioneer
+        else if (CommandName.StartsWith("GTL AI ", StringComparison.OrdinalIgnoreCase))
         {
             string CommandPrompt = CommandName["GTL AI ".Length..];
-
-            Ollama ai = new Ollama();
-
-            string answer = await ai.Ai_Request(CommandPrompt);
-
-            Console.WriteLine(answer);
+            await Ai_Stack(CommandPrompt);
         }
         else
         {
@@ -106,6 +114,14 @@ static async Task run_check(string CommandName)
         ErrorHandler.Load_Error("Error 404, Perhaps GTL?");
         return;
     }
+}
+
+static async Task Ai_Stack(string prompt)
+{
+    
+    Ollama ai = new Ollama();
+    string answer = await ai.Ai_Request(prompt);
+    Console.WriteLine(answer);
 }
 
 static void establish_connection()
