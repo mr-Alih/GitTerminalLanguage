@@ -19,7 +19,7 @@ using System.Net.Mime;
 using System.Collections;
 
 // init load
-MainLoop();
+await MainLoop();
 
 static async Task MainLoop()
 {
