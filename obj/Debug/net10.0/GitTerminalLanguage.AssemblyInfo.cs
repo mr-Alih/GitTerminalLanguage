@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GitTerminalLanguage")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0842eccc7af7803b634b84428ba694288d4899e1")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0f4f70e970ef9815646fd81f10d6da98006b6e36")]
 [assembly: System.Reflection.AssemblyProductAttribute("GitTerminalLanguage")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GitTerminalLanguage")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

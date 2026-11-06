@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.IO;
 using ErrorHandelling;
+using GTL.AI;
 
 // GTL architecture
 // GTL start to start a first connection and auto connect a session.
@@ -10,6 +11,7 @@ using ErrorHandelling;
 // GTL STATUS
 // GTL load
 // GTL parse
+//  GTL AI "answer me this?"
 
 // Main frame
 using System.Net;
@@ -19,14 +21,19 @@ using System.Collections;
 // init load
 MainLoop();
 
-static void MainLoop()
+static async Task MainLoop()
 {
-    Console.Write("[GTL]@T- :// ");
-    string Command = Console.ReadLine() ?? "";
-    run_check(Command);
+    while (true)
+    {
+        Console.Write("[GTL]@T- :// ");
+
+        string Command = Console.ReadLine() ?? "";
+
+        await run_check(Command);
+    }
 }
 
-static void run_check(string CommandName)
+static async Task run_check(string CommandName)
 {
     if (CommandName.Contains("GTL") || CommandName.Contains("gtl"))
     {
@@ -40,44 +47,64 @@ static void run_check(string CommandName)
                 {
                     case 1:
                         if (Run_Exists(".con"))
+                        {
                             state = 2;
+                        }
                         else
+                        {
                             ErrorHandler.Load_Error("ConError");
                             return;
+                        }
                         break;
 
                     case 2:
                         if (Run_Exists(".server"))
+                        {
                             state = 3;
+                        }
                         else
+                        {
                             ErrorHandler.Load_Error("FileError");
                             return;
+                        }
                         break;
 
                     case 3:
                         if (Run_Exists(".con"))
                         {
+                            state = 4;
                             // approve
                             establish_connection();
                             establish_session();
                         }
                         else
+                        {
                             ErrorHandler.Load_Error("FileError");
                             return;
+                        }
                         break;
                 }
             }
+        } else if (CommandName.StartsWith("GTL AI ", StringComparison.OrdinalIgnoreCase))
+        {
+            string CommandPrompt = CommandName["GTL AI ".Length..];
+
+            Ollama ai = new Ollama();
+
+            string answer = await ai.Ai_Request(CommandPrompt);
+
+            Console.WriteLine(answer);
         }
         else
         {
             // check if Perhaps misspelled
             ErrorHandler.Load_Error($"Error 404, Command {CommandName[4..]} Not Found");
-            MainLoop();
+            return;
         }
     } else
     {
         ErrorHandler.Load_Error("Error 404, Perhaps GTL?");
-        MainLoop();
+        return;
     }
 }
 

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\ahgha\\Documents\\PROGRAMMING\\GitTerminalLanguage\\GitTerminalLanguage.csproj": {}
+    "C:\\Users\\ahgha\\OneDrive\\Documents\\Programming\\GitTerminalLanguage\\GitTerminalLanguage.csproj": {}
   },
   "projects": {
-    "C:\\Users\\ahgha\\Documents\\PROGRAMMING\\GitTerminalLanguage\\GitTerminalLanguage.csproj": {
+    "C:\\Users\\ahgha\\OneDrive\\Documents\\Programming\\GitTerminalLanguage\\GitTerminalLanguage.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\ahgha\\Documents\\PROGRAMMING\\GitTerminalLanguage\\GitTerminalLanguage.csproj",
+        "projectUniqueName": "C:\\Users\\ahgha\\OneDrive\\Documents\\Programming\\GitTerminalLanguage\\GitTerminalLanguage.csproj",
         "projectName": "GitTerminalLanguage",
-        "projectPath": "C:\\Users\\ahgha\\Documents\\PROGRAMMING\\GitTerminalLanguage\\GitTerminalLanguage.csproj",
+        "projectPath": "C:\\Users\\ahgha\\OneDrive\\Documents\\Programming\\GitTerminalLanguage\\GitTerminalLanguage.csproj",
         "packagesPath": "C:\\Users\\ahgha\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\ahgha\\Documents\\PROGRAMMING\\GitTerminalLanguage\\obj\\",
+        "outputPath": "C:\\Users\\ahgha\\OneDrive\\Documents\\Programming\\GitTerminalLanguage\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\ahgha\\AppData\\Roaming\\NuGet\\NuGet.Config"
