@@ -42,6 +42,7 @@ static void run_check(string CommandName)
                         if (Run_Exists(".con"))
                             state = 2;
                         else
+                            ErrorHandler.Load_Error("ConError");
                             return;
                         break;
 
@@ -49,6 +50,7 @@ static void run_check(string CommandName)
                         if (Run_Exists(".server"))
                             state = 3;
                         else
+                            ErrorHandler.Load_Error("FileError");
                             return;
                         break;
 
@@ -56,9 +58,11 @@ static void run_check(string CommandName)
                         if (Run_Exists(".con"))
                         {
                             // approve
-                            state = 4;
+                            establish_connection();
+                            establish_session();
                         }
                         else
+                            ErrorHandler.Load_Error("FileError");
                             return;
                         break;
                 }
@@ -79,8 +83,8 @@ static void run_check(string CommandName)
 
 static void establish_connection()
 {
-    
-
+    string FileContent = Convert.ToString(Random.Shared.Next(1111111, 8999999));
+    File.WriteAllText(".con", FileContent);
 }
 
 static void establish_session()
