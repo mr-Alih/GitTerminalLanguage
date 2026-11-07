@@ -36,7 +36,7 @@ static async Task MainLoop()
 
 static async Task run_check(string CommandName)
 {
-    if (CommandName.Contains("GTL") || CommandName.Contains("gtl"))
+    if (CommandName.StartsWith("GTL") || CommandName.StartsWith("gtl"))
     {
         if (CommandName.Contains("start"))
         {
