@@ -21,6 +21,14 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 // init load
+Directory.CreateDirectory("./AI");
+foreach (string FilePath in Directory.GetFiles("./AI", "*.bot"))
+{
+    string BotName = Path.GetFileNameWithoutExtension(FilePath);
+    GTLState.BotList.Add(BotName);
+}
+
+await MainLoop();
 await MainLoop();
 
 static async Task MainLoop()
@@ -51,55 +59,59 @@ static async Task run_check(string CommandName)
             Environment.Exit(1);
         }
 
-        if (Action.Equals("AI", StringComparison.OrdinalIgnoreCase))
+        if (Action.StartsWith("AI ", StringComparison.OrdinalIgnoreCase))
         {
-            string AiAction = CommandName.Substring(3).Trim();
-            // Debugging basic filesstack
-            if (AiAction.Equals("DEBUG FILE", StringComparison.OrdinalIgnoreCase))
-            {
-                // hardcode local filepath
-                string filePath = ("./Local/" + CommandName["GTL AI Debug File ".Length..]);
-                string content = File.ReadAllText(filePath);
-                string PromptHelper = $"Please debug this code, make your answer as short as possible. no details until asked";
-                string CommandPrompt = $"{PromptHelper}\n\n{content}\nProgram filepath: {filePath}";
-                await Ai_Stack(CommandPrompt);
-            }
+            string AiAction = Action[3..].Trim();
 
-            // Main ai questioneer
-            else if (AiAction.Equals("ASK", StringComparison.OrdinalIgnoreCase))
+            // Create a bot
+            if (AiAction.Equals("bot", StringComparison.OrdinalIgnoreCase))
             {
-                string CommandPrompt = CommandName["GTL ASK ".Length..];
-                await Ai_Stack(CommandPrompt);
-            }
-
-
-            // AI architecture
-            /// AI start will create an Ai branche.
-            /// AI bot "botname" should create a bot
-            /// then if you give it a prompt, it will repeat prompt in set time
-            // Start ai 
-            else if (AiAction.Equals("start", StringComparison.OrdinalIgnoreCase))
-            {
-                string FileContent = Convert.ToString("First Started AI Name");
-                File.WriteAllText($"./AI/.Ai", FileContent);
-            }
-            else if (AiAction.EndsWith("bot", StringComparison.OrdinalIgnoreCase))
-            {
-                Console.Write("[GTL]@T- :// BotName? ");
+                Console.Write("[GTL] BotName? ");
                 string BotName = Console.ReadLine() ?? "";
+
                 CreateBot(BotName);
-
-                string FileContent = Convert.ToString(""); // Promptlist
-                File.WriteAllText($"./AI/.{BotName}", FileContent);
             }
-            // now if you do GTL AI %botname% (prompt) it will add it to its promptlist
-            else if (AiAction.Equals($"", StringComparison.OrdinalIgnoreCase))
-            {
-                Console.Write("[GTL]@T- :// BotName? ");
-                string BotName = Console.ReadLine() ?? "";
 
-                string FileContent = Convert.ToString(""); // Promptlist
-                File.WriteAllText($"./AI/.{BotName}", FileContent);
+            // Ask the main AI
+            else if (AiAction.StartsWith("ASK ", StringComparison.OrdinalIgnoreCase))
+            {
+                string CommandPrompt = AiAction[4..];
+                await Ai_Stack(CommandPrompt);
+            }
+
+            // Bot-specific commands
+            else
+            {
+                string[] Parts = AiAction.Split(
+                    ' ',
+                    2,
+                    StringSplitOptions.RemoveEmptyEntries
+                );
+
+                if (Parts.Length < 2)
+                {
+                    Console.WriteLine("Invalid AI command.");
+                    return;
+                }
+
+                string BotName = Parts[0];
+                string Prompt = Parts[1];
+
+                if (!GTLState.BotList.Exists(name =>
+                    string.Equals(name, BotName, StringComparison.OrdinalIgnoreCase)))
+                {
+                    Console.WriteLine("Bot not found.");
+                    return;
+                }
+
+                string FilePath = $"./AI/{BotName}.bot";
+
+                File.AppendAllText(
+                    FilePath,
+                    Prompt + Environment.NewLine
+                );
+
+                Console.WriteLine($"Prompt added to {BotName}.");
             }
         }
         else
@@ -123,19 +135,29 @@ static async Task Ai_Stack(string prompt)
     string answer = await ai.Ai_Request(prompt);
     Console.WriteLine(answer);
 }
+// creating the bot
 static void CreateBot(string BotName)
 {
-    if (GTLState.BotList.Contains(BotName))
+    if (string.IsNullOrWhiteSpace(BotName))
+    {
+        Console.WriteLine("Invalid bot name.");
+        return;
+    }
+
+    if (GTLState.BotList.Contains(BotName,
+        StringComparer.OrdinalIgnoreCase))
     {
         Console.WriteLine("Bot already exists.");
         return;
     }
 
-    GTLState.BotList.Add(BotName);
-
     Directory.CreateDirectory("./AI");
 
-    File.WriteAllText($"./AI/.{BotName}", "");
+    string FilePath = $"./AI/{BotName}.bot";
+
+    File.WriteAllText(FilePath, "");
+
+    GTLState.BotList.Add(BotName);
 
     Console.WriteLine($"Bot {BotName} created.");
 }
