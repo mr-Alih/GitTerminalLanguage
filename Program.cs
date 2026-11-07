@@ -36,59 +36,25 @@ static async Task MainLoop()
 
 static async Task run_check(string CommandName)
 {
-    if (CommandName.StartsWith("GTL") || CommandName.StartsWith("gtl"))
+    if (CommandName.StartsWith("GTL ", StringComparison.OrdinalIgnoreCase))
     {
-        if (CommandName.Contains("start"))
+        // forward the action into a string
+        string Action = CommandName.Substring(4).Trim();
+        if (Action.Equals("start", StringComparison.OrdinalIgnoreCase))
         {
-            int state = 1;
-
-            while (state <= 3)
-            {
-                switch (state)
-                {
-                    case 1:
-                        if (Run_Exists(".con"))
-                        {
-                            state = 2;
-                        }
-                        else
-                        {
-                            ErrorHandler.Load_Error("ConError");
-                            return;
-                        }
-                        break;
-
-                    case 2:
-                        if (Run_Exists(".server"))
-                        {
-                            state = 3;
-                        }
-                        else
-                        {
-                            ErrorHandler.Load_Error("FileError");
-                            return;
-                        }
-                        break;
-
-                    case 3:
-                        if (Run_Exists(".con"))
-                        {
-                            state = 4;
-                            // approve
-                            establish_connection();
-                            establish_session();
-                        }
-                        else
-                        {
-                            ErrorHandler.Load_Error("FileError");
-                            return;
-                        }
-                        break;
-                }
-            }
+            await RunSwitchCheck();
         }
+        // Exitting the application
+        if (Action.Equals("exit", StringComparison.OrdinalIgnoreCase))
+        {
+            await exit_connection();
+            await exit_session();
+            Environment.Exit(1);
+        }
+
+
         // Debugging basic filesstack
-        else if (CommandName.StartsWith("GTL AI Debug File", StringComparison.OrdinalIgnoreCase))
+        else if (Action.Equals("AI DEBUG FILE", StringComparison.OrdinalIgnoreCase))
         {
             // hardcode local filepath
             string filePath = ("./Local/" + CommandName["GTL AI Debug File ".Length..]);
@@ -97,8 +63,9 @@ static async Task run_check(string CommandName)
             string CommandPrompt = $"{PromptHelper}\n\n{content}\nProgram filepath: {filePath}";
             await Ai_Stack(CommandPrompt);
         }
+
         // Main ai questioneer
-        else if (CommandName.StartsWith("GTL AI ", StringComparison.OrdinalIgnoreCase))
+        else if (Action.Equals("AI", StringComparison.OrdinalIgnoreCase))
         {
             string CommandPrompt = CommandName["GTL AI ".Length..];
             await Ai_Stack(CommandPrompt);
@@ -106,16 +73,17 @@ static async Task run_check(string CommandName)
         else
         {
             // check if Perhaps misspelled
-            ErrorHandler.Load_Error($"Error 404, Command {CommandName[4..]} Not Found");
+            ErrorHandler.Load_Error($"404, Command {CommandName[4..]} Not Found");
             return;
         }
     } else
     {
-        ErrorHandler.Load_Error("Error 404, Perhaps GTL?");
+        ErrorHandler.Load_Error("404, Perhaps GTL?");
         return;
     }
 }
 
+// AI Stack
 static async Task Ai_Stack(string prompt)
 {
     
@@ -124,16 +92,82 @@ static async Task Ai_Stack(string prompt)
     Console.WriteLine(answer);
 }
 
+// connecting:
+static async Task RunSwitchCheck()
+{
+    int state = 1;
+    while (state <= 3)
+    {
+        switch (state)
+        {
+            case 1:
+                if (Run_Exists(".con"))
+                {
+                    state = 2;
+                }
+                else
+                {
+                    establish_connection();
+                }
+                break;
+
+            case 2:
+                if (Run_Exists(".server"))
+                {
+                    state = 3;
+                }
+                else
+                {
+                    establish_session();
+                }
+                break;
+
+            case 3:
+                if (Run_Exists(".local"))
+                {
+                    state = 4;
+                    // approve
+                    continue;
+                }
+                else
+                {
+                    establish_local();
+                }
+                break;
+        }
+    }
+}
+
+
+// connection making (saved inside the main module)
 static void establish_connection()
 {
     string FileContent = Convert.ToString(Random.Shared.Next(1111111, 8999999));
     File.WriteAllText(".con", FileContent);
 }
+/// exiting the connection
+static async Task exit_connection()
+{
+    File.Delete(".con");
+}
 
+static void establish_local()
+{
+    string FileContent = Convert.ToString(Random.Shared.Next(1111111, 8999999));
+    File.WriteAllText("./Local/.local", FileContent);
+}
+
+// session making (saved inside the server module)
+/// making the session
 static void establish_session()
 {
-    
-
+    string FileContent = Convert.ToString(Random.Shared.Next(1111111, 8999999));
+    File.WriteAllText("./Server/.server", FileContent);
+}
+/// exiting the session
+static async Task exit_session()
+{
+    File.Delete("./Server/.server");
 }
 
 // small controls and checks

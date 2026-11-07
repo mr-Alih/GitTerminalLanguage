@@ -19,3 +19,9 @@ obj/
 
 # private
 .priv
+
+# creation of sessionmate
+.session
+.con
+.server
+.local
