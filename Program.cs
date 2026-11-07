@@ -17,6 +17,7 @@ using GTL.AI;
 using System.Net;
 using System.Net.Mime;
 using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 // init load
@@ -27,9 +28,7 @@ static async Task MainLoop()
     while (true)
     {
         Console.Write("[GTL]@T- :// ");
-
         string Command = Console.ReadLine() ?? "";
-
         await run_check(Command);
     }
 }
@@ -42,7 +41,7 @@ static async Task run_check(string CommandName)
         string Action = CommandName.Substring(4).Trim();
         if (Action.Equals("start", StringComparison.OrdinalIgnoreCase))
         {
-            await RunSwitchCheck();
+            RunSwitchCheck();
         }
         // Exitting the application
         if (Action.Equals("exit", StringComparison.OrdinalIgnoreCase))
@@ -52,23 +51,56 @@ static async Task run_check(string CommandName)
             Environment.Exit(1);
         }
 
-
-        // Debugging basic filesstack
-        else if (Action.Equals("AI DEBUG FILE", StringComparison.OrdinalIgnoreCase))
+        if (Action.Equals("AI", StringComparison.OrdinalIgnoreCase))
         {
-            // hardcode local filepath
-            string filePath = ("./Local/" + CommandName["GTL AI Debug File ".Length..]);
-            string content = File.ReadAllText(filePath);
-            string PromptHelper = $"Please debug this code, make your answer as short as possible. no details until asked";
-            string CommandPrompt = $"{PromptHelper}\n\n{content}\nProgram filepath: {filePath}";
-            await Ai_Stack(CommandPrompt);
-        }
+            string AiAction = CommandName.Substring(3).Trim();
+            // Debugging basic filesstack
+            if (AiAction.Equals("DEBUG FILE", StringComparison.OrdinalIgnoreCase))
+            {
+                // hardcode local filepath
+                string filePath = ("./Local/" + CommandName["GTL AI Debug File ".Length..]);
+                string content = File.ReadAllText(filePath);
+                string PromptHelper = $"Please debug this code, make your answer as short as possible. no details until asked";
+                string CommandPrompt = $"{PromptHelper}\n\n{content}\nProgram filepath: {filePath}";
+                await Ai_Stack(CommandPrompt);
+            }
 
-        // Main ai questioneer
-        else if (Action.Equals("AI", StringComparison.OrdinalIgnoreCase))
-        {
-            string CommandPrompt = CommandName["GTL AI ".Length..];
-            await Ai_Stack(CommandPrompt);
+            // Main ai questioneer
+            else if (AiAction.Equals("ASK", StringComparison.OrdinalIgnoreCase))
+            {
+                string CommandPrompt = CommandName["GTL ASK ".Length..];
+                await Ai_Stack(CommandPrompt);
+            }
+
+
+            // AI architecture
+            /// AI start will create an Ai branche.
+            /// AI bot "botname" should create a bot
+            /// then if you give it a prompt, it will repeat prompt in set time
+            // Start ai 
+            else if (AiAction.Equals("start", StringComparison.OrdinalIgnoreCase))
+            {
+                string FileContent = Convert.ToString("First Started AI Name");
+                File.WriteAllText($"./AI/.Ai", FileContent);
+            }
+            else if (AiAction.EndsWith("bot", StringComparison.OrdinalIgnoreCase))
+            {
+                Console.Write("[GTL]@T- :// BotName? ");
+                string BotName = Console.ReadLine() ?? "";
+                CreateBot(BotName);
+
+                string FileContent = Convert.ToString(""); // Promptlist
+                File.WriteAllText($"./AI/.{BotName}", FileContent);
+            }
+            // now if you do GTL AI %botname% (prompt) it will add it to its promptlist
+            else if (AiAction.Equals($"", StringComparison.OrdinalIgnoreCase))
+            {
+                Console.Write("[GTL]@T- :// BotName? ");
+                string BotName = Console.ReadLine() ?? "";
+
+                string FileContent = Convert.ToString(""); // Promptlist
+                File.WriteAllText($"./AI/.{BotName}", FileContent);
+            }
         }
         else
         {
@@ -91,51 +123,37 @@ static async Task Ai_Stack(string prompt)
     string answer = await ai.Ai_Request(prompt);
     Console.WriteLine(answer);
 }
+static void CreateBot(string BotName)
+{
+    if (GTLState.BotList.Contains(BotName))
+    {
+        Console.WriteLine("Bot already exists.");
+        return;
+    }
+
+    GTLState.BotList.Add(BotName);
+
+    Directory.CreateDirectory("./AI");
+
+    File.WriteAllText($"./AI/.{BotName}", "");
+
+    Console.WriteLine($"Bot {BotName} created.");
+}
+
 
 // connecting:
-static async Task RunSwitchCheck()
+static void RunSwitchCheck()
 {
-    int state = 1;
-    while (state <= 3)
-    {
-        switch (state)
-        {
-            case 1:
-                if (Run_Exists(".con"))
-                {
-                    state = 2;
-                }
-                else
-                {
-                    establish_connection();
-                }
-                break;
+    if (!Run_Exists(".con"))
+        establish_connection();
 
-            case 2:
-                if (Run_Exists(".server"))
-                {
-                    state = 3;
-                }
-                else
-                {
-                    establish_session();
-                }
-                break;
+    if (!Run_Exists("./Server/.server"))
+        establish_session();
 
-            case 3:
-                if (Run_Exists(".local"))
-                {
-                    state = 4;
-                    // approve
-                    continue;
-                }
-                else
-                {
-                    establish_local();
-                }
-                break;
-        }
-    }
+    if (!Run_Exists("./Local/.local"))
+        establish_local();
+
+    Console.WriteLine("[GTL] Connection established.");
 }
 
 
@@ -184,4 +202,9 @@ static bool Run_Exists(string FileNameCheck)
         ErrorHandler.Load_Error("Error ALL");
         return false;
     }
+}
+
+static class GTLState
+{
+    public static List<string> BotList = [];
 }
