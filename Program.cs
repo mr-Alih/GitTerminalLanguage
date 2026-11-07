@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.IO;
 using ErrorHandelling;
 using GTL.AI;
+using GTL.BotRunner;
 
 // GTL architecture
 // GTL start to start a first connection and auto connect a session.
@@ -87,7 +88,7 @@ static async Task run_check(string CommandName)
                     2,
                     StringSplitOptions.RemoveEmptyEntries
                 );
-
+                
                 if (Parts.Length < 2)
                 {
                     Console.WriteLine("Invalid AI command.");
@@ -104,14 +105,23 @@ static async Task run_check(string CommandName)
                     return;
                 }
 
-                string FilePath = $"./AI/{BotName}.bot";
+                if (Prompt.StartsWith("Run", StringComparison.OrdinalIgnoreCase))
+                {
+                    SystemRunner Runner = new SystemRunner();
+                    await Runner.RunBot(BotName);
+                }
+                // else just assume that its creating an prompt runner inside a bot
+                else
+                {
+                    string FilePath = $"./AI/{BotName}.bot";
 
-                File.AppendAllText(
-                    FilePath,
-                    Prompt + Environment.NewLine
-                );
+                    File.AppendAllText(
+                        FilePath,
+                        Prompt + Environment.NewLine
+                    );
 
-                Console.WriteLine($"Prompt added to {BotName}.");
+                    Console.WriteLine($"Prompt added to {BotName}.");
+                }
             }
         }
         else
