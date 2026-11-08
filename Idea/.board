@@ -19,3 +19,31 @@ GTL Ai ASK (Ask Ai directly)
 GTL Ai bot (Create new bot)
 GTL Ai {BOTNAME} [ACTION] (Add action to botlist)
 GTL Ai {BOTNAME} Run (Run a legacy bot an action directly (No time delay))
+
+GTL config set username {USERNAME}
+GTL config get username 
+GTL config list
+
+GTL list
+
+##further connection:
+GTL Disconnect
+GTL Disconnect --force
+
+##history
+GTL History
+GTL History --sessions
+GTL History --connections
+
+##versioncontrol
+GTL Rollback
+GTL Rollback --{SESSIONVERSION}
+(Remember that rollback is only allowed at a connection based not server, local or Local(Session))
+
+
+#botting
+Create an bot via the bot Command
+the bot is allowed indefinetly to run with its own pressist.
+Bots will will independant. Loop.
+Bot wil run as agents in a cli.
+
