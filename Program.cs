@@ -1,42 +1,33 @@
-﻿// init
-// Main frame
-using System.Net;
-using System.Net.Mime;
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.ComponentModel;
+﻿using System;
 using System.IO;
-using ErrorHandelling;
-using GTL.AI;
-using GTL.BotRunner;
 using GTL.ProcessRunner;
 using GTL.CommandRunner;
 using GTL.AiCommandRunner;
+using GTL.Core;
 
-// GTL architecture
-// GTL start to start a first connection and auto connect a session.
-// GTL session status
-// GTL connection status
-// GTL STATUS
-// GTL load
-// GTL parse
-//  GTL AI "answer me this?"
-
-// the end proces runner for session:
+// Initialize components
 ProcessRunner processRunner = new ProcessRunner();
-CommandRunner commandRunner = new CommandRunner();
+
 AiCommandRunner aiCommandRunner = new AiCommandRunner();
+
+ConnectionRunner connectionRunner = new ConnectionRunner();
+
+CommandRunner commandRunner = new CommandRunner(
+    processRunner,
+    aiCommandRunner,
+    connectionRunner
+);
+
 Console.WriteLine("GTL 2026*c CopyRight");
 
-// init load
+// Load bots
 Directory.CreateDirectory("./AI");
-foreach (string FilePath in Directory.GetFiles("./AI", "*.bot"))
-{
-    string BotName = Path.GetFileNameWithoutExtension(FilePath);
-    GTLState.BotList.Add(BotName);
-}
 
+foreach (string filePath in Directory.GetFiles("./AI", "*.bot"))
+{
+    string botName = Path.GetFileNameWithoutExtension(filePath);
+    GTLState.BotList.Add(botName);
+}
 
 await MainLoop();
 
@@ -45,69 +36,9 @@ async Task MainLoop()
     while (true)
     {
         Console.Write("[GTL]@T- :// ");
-        string Command = Console.ReadLine() ?? "";
-        await commandRunner.Execute(Command);
+
+        string command = Console.ReadLine() ?? "";
+
+        await commandRunner.Execute(command);
     }
-}
-
-
-
-
-// connecting:
-static void RunSwitchCheck()
-{
-    if (!Run_Exists(".con"))
-        establish_connection();
-
-    if (!Run_Exists("./Server/.server"))
-        establish_session();
-
-    if (!Run_Exists("./Local/.local"))
-        establish_local();
-
-    Console.WriteLine("[GTL] Connection established.");
-}
-
-
-// connection making (saved inside the main module)
-static void establish_connection()
-{
-    string FileContent = Convert.ToString(Random.Shared.Next(1111111, 8999999));
-    File.WriteAllText(".con", FileContent);
-}
-
-static void establish_local()
-{
-    string FileContent = Convert.ToString(Random.Shared.Next(1111111, 8999999));
-    File.WriteAllText("./Local/.local", FileContent);
-}
-
-// session making (saved inside the server module)
-/// making the session
-static void establish_session()
-{
-    string FileContent = Convert.ToString(Random.Shared.Next(1111111, 8999999));
-    File.WriteAllText("./Server/.server", FileContent);
-}
-
-
-// small controls and checks
-static bool Run_Exists(string FileNameCheck)
-{
-    bool Run_Bool;
-    try
-    {
-        Run_Bool = File.Exists(FileNameCheck);
-        return Run_Bool;
-    }
-    catch
-    {
-        ErrorHandler.Load_Error("Error ALL");
-        return false;
-    }
-}
-
-static class GTLState
-{
-    public static List<string> BotList = [];
 }
