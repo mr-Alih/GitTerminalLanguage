@@ -78,3 +78,69 @@ This repository documents that journey.
 **Built independently. Developed step by step. Powered by curiosity.**
 
 *GitTerminalLanguage — GTL*
+
+# Expand the code brackets(From IdeaBoard):
+`GTL` (Command Parser).
+
+`GTL Start` (Get a connection fixed).
+
+`GTL Session` (status show).
+
+`GTL Server` (status show).
+
+`GTL connection`.
+
+`GTL Connect --{CONNECTIONLINE} `(Connect to a connectionline).
+
+`GTL Session --{SESSIONVERSION}` (Go to past session File).
+
+
+`GTL Publish #--{Status check (Unneeded)} `(Publishes local files to sender conectionline to server)
+
+`GTL Update `(Gets Serverfiles from current session to local)
+
+`GTL Status`
+
+`GTL Help`
+
+
+`GTL Ai`  (Command Parser)
+
+`GTL Ai ASK` (Ask Ai directly)
+
+`GTL Ai bot` (Create new bot)
+
+`GTL Ai {BOTNAME} [ACTION]` (Add action to botlist)
+
+`GTL Ai {BOTNAME} Run` (Run a legacy bot an action directly (No time delay))
+
+
+`GTL config set username` {USERNAME}
+
+`GTL config get username` 
+
+`GTL config list`
+
+`GTL list`
+
+## Further connection:
+`GTL Disconnect`
+`GTL Disconnect --force`
+
+## History
+`GTL History`
+`GTL History --sessions`
+`GTL History --connections`
+
+## Versioncontrol
+`GTL Rollback`
+`GTL Rollback --{SESSIONVERSION}`
+(Remember that rollback is only allowed at a connection based not server, local or Local(Session))
+
+
+# Botting
+Create an bot via the bot Command
+the bot is allowed indefinetly to run with its own pressist.
+Bots will will independant. Loop.
+Bot wil run as agents in a cli.
+
